@@ -1,0 +1,773 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - StreamLocal{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        /* ==================================================
+           PROFIL PUBLIC
+           ================================================== */
+
+        .public-profile {
+
+            max-width: 1100px;
+
+            margin: 40px auto;
+
+            padding: 20px;
+        }
+
+        /* ==================================================
+           EN-TÊTE DU PROFIL
+           ================================================== */
+
+        .profile-header {
+
+            background: #ffffff;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 30px;
+
+            box-shadow:
+                0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ==================================================
+           PHOTO DE PROFIL
+           ================================================== */
+
+        .profile-photo {
+
+            width: 130px;
+
+            height: 130px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            border: 4px solid #eeeeee;
+        }
+
+        .profile-photo-placeholder {
+
+            width: 130px;
+
+            height: 130px;
+
+            border-radius: 50%;
+
+            background: #eeeeee;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 55px;
+
+            color: #777;
+        }
+
+        /* ==================================================
+           INFORMATIONS
+           ================================================== */
+
+        .profile-info {
+
+            flex: 1;
+        }
+
+        .profile-info h1 {
+
+            margin: 0 0 8px;
+
+            font-size: 30px;
+        }
+
+        .profile-bio {
+
+            color: #666;
+
+            margin: 10px 0 20px;
+
+            line-height: 1.5;
+        }
+
+        /* ==================================================
+           STATISTIQUES
+           ================================================== */
+
+        .profile-stats {
+
+            display: flex;
+
+            gap: 30px;
+
+            margin-top: 15px;
+        }
+
+        .stat {
+
+            text-align: center;
+        }
+
+        .stat strong {
+
+            display: block;
+
+            font-size: 22px;
+        }
+
+        .stat span {
+
+            color: #777;
+
+            font-size: 14px;
+        }
+
+        /* ==================================================
+           BOUTON SUIVRE
+           ================================================== */
+
+        .follow-button {
+
+            border: none;
+
+            padding: 12px 25px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            font-size: 15px;
+
+            background: #111;
+
+            color: white;
+
+            transition: 0.2s;
+        }
+
+        .follow-button:hover {
+
+            transform: translateY(-2px);
+
+            opacity: 0.9;
+        }
+
+        .follow-button.following {
+
+            background: #eeeeee;
+
+            color: #111;
+        }
+
+        /* ==================================================
+           BOUTON MODIFIER
+           ================================================== */
+
+        .edit-button {
+
+            display: inline-block;
+
+            padding: 12px 25px;
+
+            border-radius: 10px;
+
+            background: #eeeeee;
+
+            color: #111;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        /* ==================================================
+           SECTION VIDÉOS
+           ================================================== */
+
+        .videos-section {
+
+            margin-top: 35px;
+        }
+
+        .videos-section h2 {
+
+            margin-bottom: 20px;
+        }
+
+        .videos-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+        /* ==================================================
+           CARTE VIDÉO
+           ================================================== */
+
+        .video-card {
+
+            background: #ffffff;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.08);
+
+            transition: 0.2s;
+        }
+
+        .video-card:hover {
+
+            transform: translateY(-4px);
+        }
+
+        .video-preview {
+
+            width: 100%;
+
+            height: 200px;
+
+            background: #000;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+        .video-content {
+
+            padding: 15px;
+        }
+
+        .video-title {
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+        }
+
+        .video-description {
+
+            color: #666;
+
+            font-size: 14px;
+
+            margin-bottom: 15px;
+        }
+
+        /* ==================================================
+           STATISTIQUES VIDÉO
+           ================================================== */
+
+        .video-stats {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: #777;
+
+            font-size: 13px;
+        }
+
+        /* ==================================================
+           AUCUNE VIDÉO
+           ================================================== */
+
+        .no-videos {
+
+            background: #ffffff;
+
+            border-radius: 15px;
+
+            padding: 50px 20px;
+
+            text-align: center;
+
+            color: #777;
+        }
+
+        /* ==================================================
+           RESPONSIVE
+           ================================================== */
+
+        @media (max-width: 800px) {
+
+            .profile-header {
+
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+            .profile-stats {
+
+                justify-content: center;
+
+                flex-wrap: wrap;
+            }
+
+            .videos-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .public-profile {
+
+                margin: 20px auto;
+
+                padding: 10px;
+            }
+
+            .videos-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .profile-photo,
+            .profile-photo-placeholder {
+
+                width: 100px;
+
+                height: 100px;
+            }
+
+            .profile-photo-placeholder {
+
+                font-size: 40px;
+            }
+
+        }
+
+    </style>
+
+
+    <!-- ==================================================
+         CONTENU PRINCIPAL
+         ================================================== -->
+
+    <main class="public-profile">
+
+        <!-- ==================================================
+             EN-TÊTE DU PROFIL
+             ================================================== -->
+
+        <section class="profile-header">
+
+            <!-- ==================================================
+                 PHOTO
+                 ================================================== -->
+
+            {% if user.profile_photo %}
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='uploads/' + user.profile_photo
+                    ) }}"
+                    alt="Photo de {{ user.username }}"
+                    class="profile-photo"
+                >
+
+            {% else %}
+
+                <div class="profile-photo-placeholder">
+
+                    👤
+
+                </div>
+
+            {% endif %}
+
+            <!-- ==================================================
+                 INFORMATIONS
+                 ================================================== -->
+
+            <div class="profile-info">
+
+                <h1>
+                    {{ user.username }}
+                </h1>
+
+                {% if user.bio %}
+
+                    <p class="profile-bio">
+
+                        {{ user.bio }}
+
+                    </p>
+
+                {% else %}
+
+                    <p class="profile-bio">
+
+                        Aucun renseignement pour le moment.
+
+                    </p>
+
+                {% endif %}
+
+                <!-- ==================================================
+                     STATISTIQUES
+                     ================================================== -->
+
+                <div class="profile-stats">
+
+                    <div class="stat">
+
+                        <strong>
+                            {{ videos_count }}
+                        </strong>
+
+                        <span>
+                            Vidéos
+                        </span>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <strong id="followers-count">
+
+                            {{ followers }}
+
+                        </strong>
+
+                        <span>
+                            Abonnés
+                        </span>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <strong>
+                            {{ following }}
+                        </strong>
+
+                        <span>
+                            Abonnements
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- ==================================================
+                     BOUTON D'ACTION
+                     ================================================== -->
+
+                <div style="margin-top: 20px;">
+
+                    {% if is_own_profile %}
+
+                        <a
+                            href="{{ url_for('profile') }}"
+                            class="edit-button"
+                        >
+
+                            Modifier mon profil
+
+                        </a>
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            id="follow-button"
+                            class="follow-button
+                            {% if is_following %}
+                                following
+                            {% endif %}"
+                            data-user-id="{{ user.id }}"
+                        >
+
+                            {% if is_following %}
+
+                                Suivi ✓
+
+                            {% else %}
+
+                                Suivre
+
+                            {% endif %}
+
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ==================================================
+             SECTION VIDÉOS
+             ================================================== -->
+
+        <section class="videos-section">
+
+            <h2>
+
+                Vidéos de {{ user.username }}
+
+            </h2>
+
+            {% if videos %}
+
+                <div class="videos-grid">
+
+                    {% for video in videos %}
+
+                        <article class="video-card">
+
+                            <!-- ==================================================
+                                 VIDÉO
+                                 ================================================== -->
+
+                            <video
+                                class="video-preview"
+                                controls
+                                preload="metadata"
+                            >
+
+                                <source
+                                    src="{{ video.video_url }}"
+                                    type="video/mp4"
+                                >
+
+                                Votre navigateur ne supporte
+                                pas la lecture vidéo.
+
+                            </video>
+
+                            <!-- ==================================================
+                                 INFORMATIONS VIDÉO
+                                 ================================================== -->
+
+                            <div class="video-content">
+
+                                <div class="video-title">
+
+                                    {{ video.title }}
+
+                                </div>
+
+                                {% if video.description %}
+
+                                    <div class="video-description">
+
+                                        {{ video.description }}
+
+                                    </div>
+
+                                {% endif %}
+
+                                <!-- ==================================================
+                                     STATISTIQUES
+                                     ================================================== -->
+
+                                <div class="video-stats">
+
+                                    <span>
+
+                                        ❤️
+                                        {{ video.likes_count }}
+
+                                    </span>
+
+                                    <span>
+
+                                        👁️
+                                        {{ video.views_count }}
+
+                                    </span>
+
+                                    <span>
+
+                                        💬
+                                        {{ video.comments_count }}
+
+                                    </span>
+
+                                    <span>
+
+                                        🔗
+                                        {{ video.shares_count }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="no-videos">
+
+                    <h3>
+                        🎬 Aucune vidéo
+                    </h3>
+
+                    <p>
+
+                        {{ user.username }}
+                        n'a pas encore publié de vidéo.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+    <!-- ==================================================
+         JAVASCRIPT
+         ================================================== -->
+
+    {% if not is_own_profile %}
+
+    <script>
+
+        const followButton =
+            document.getElementById(
+                "follow-button"
+            );
+
+        if (followButton) {
+
+            followButton.addEventListener(
+                "click",
+                async function () {
+
+                    const userId =
+                        this.dataset.userId;
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                `/api/users/${userId}/follow`,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    }
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (!data.success) {
+
+                            alert(
+                                data.message ||
+                                "Impossible de modifier l'abonnement."
+                            );
+
+                            return;
+                        }
+
+                        /* ----------------------------------
+                           Mettre à jour le nombre d'abonnés
+                           ---------------------------------- */
+
+                        const followersCount =
+                            document.getElementById(
+                                "followers-count"
+                            );
+
+                        if (followersCount) {
+
+                            followersCount.textContent =
+                                data.followers_count;
+
+                        }
+
+                        /* ----------------------------------
+                           Modifier le bouton
+                           ---------------------------------- */
+
+                        if (data.following) {
+
+                            followButton.textContent =
+                                "Suivi ✓";
+
+                            followButton.classList.add(
+                                "following"
+                            );
+
+                        } else {
+
+                            followButton.textContent =
+                                "Suivre";
+
+                            followButton.classList.remove(
+                                "following"
+                            );
+
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "Erreur follow :",
+                            error
+                        );
+
+                        alert(
+                            "Une erreur est survenue."
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+    </script>
+
+    {% endif %}
+
+{% endblock %}

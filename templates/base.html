@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}StreamLocal{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <a
+            href="{% if session.get('is_admin') %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('index') }}{% endif %}"
+            class="logo"
+        >
+            StreamLocal
+        </a>
+
+        <div class="nav-links">
+
+            {% if session.get("is_admin") %}
+
+    <span class="admin-nav-label">
+        🛠️ Espace administrateur
+    </span>
+
+    <a href="{{ url_for('admin_dashboard') }}">
+        📊 Tableau de bord
+    </a>
+
+    <a href="{{ url_for('admin_accounts') }}">
+        👤 Comptes
+    </a>
+
+    <a href="{{ url_for('admin_settings') }}">
+        ⚙️ Paramètres
+    </a>
+
+    <a href="{{ url_for('logout') }}">
+        Déconnexion
+    </a>
+
+            {% elif session.get("user_id") %}
+
+    <a href="{{ url_for('feed') }}">
+        Pour toi
+    </a>
+
+    <a href="{{ url_for('upload_video') }}">
+        Publier
+    </a>
+
+    <a href="{{ url_for('search') }}">
+        🔍 Recherche
+    </a>
+
+    <a href="{{ url_for('profile') }}">
+        Mon profil
+    </a>
+            <a href="{{ url_for('monetization_dashboard') }}">
+    💰 Monétisation
+     </a>
+
+    <a
+    href="{{ url_for('notifications') }}"
+    class="notification-link"
+>
+    🔔 Notifications
+
+    {% if unread_notifications > 0 %}
+
+        <span class="notification-badge">
+            {{ unread_notifications }}
+        </span>
+
+    {% endif %}
+
+</a>
+
+    <a href="{{ url_for('logout') }}">
+        Déconnexion
+    </a>
+
+{% else %}
+
+    <a href="{{ url_for('login') }}">
+        Connexion
+    </a>
+
+    <a href="{{ url_for('register') }}"
+       class="nav-button">
+        S'inscrire
+    </a>
+
+{% endif %}
+
+        </div>
+
+    </nav>
+
+    <!-- Messages Flask -->
+
+    <div class="messages">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="message {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+    </div>
+
+    <main>
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block title %}
+Recherche - StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="search-page">
+
+    <div class="search-header">
+
+        <span class="dashboard-label">
+            STREAMLOCAL
+        </span>
+
+        <h1>
+            🔍 Recherche
+        </h1>
+
+        <form
+            method="GET"
+            action="{{ url_for('search') }}"
+            class="search-form"
+        >
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Rechercher un créateur, une vidéo..."
+                autofocus
+            >
+
+            <button type="submit">
+                Rechercher
+            </button>
+
+        </form>
+
+    </div>
+
+    {% if query %}
+
+        <!-- ==========================================
+             RÉSULTATS : UTILISATEURS
+        =========================================== -->
+
+        <section class="search-section">
+
+            <h2>
+                👤 Créateurs
+                {% if users %}
+                    ({{ users|length }})
+                {% endif %}
+            </h2>
+
+            {% if users %}
+
+                <div class="search-users-grid">
+
+                    {% for user in users %}
+
+                        <a
+                            href="{{ url_for('public_profile', user_id=user.id) }}"
+                            class="search-user-card"
+                        >
+
+                            <div class="search-user-avatar">
+
+                                {% if user.profile_photo %}
+
+                                    <img
+                                        src="{{ user.profile_photo }}"
+                                        alt="Profil"
+                                    >
+
+                                {% else %}
+
+                                    {{ user.username[0]|upper }}
+
+                                {% endif %}
+
+                            </div>
+
+                            <strong>
+                                @{{ user.username }}
+                            </strong>
+
+                            {% if user.bio %}
+
+                                <small>
+                                    {{ user.bio }}
+                                </small>
+
+                            {% endif %}
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="search-empty">
+                    Aucun créateur trouvé.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+        <!-- ==========================================
+             RÉSULTATS : VIDÉOS
+        =========================================== -->
+
+        <section class="search-section">
+
+            <h2>
+                🎬 Vidéos
+                {% if videos %}
+                    ({{ videos|length }})
+                {% endif %}
+            </h2>
+
+            {% if videos %}
+
+                <div class="search-videos-grid">
+
+                    {% for video in videos %}
+
+                        <a
+                            href="{{ url_for('feed') }}"
+                            class="search-video-card"
+                        >
+
+                            <video
+                                src="{{ video.video_url }}"
+                                muted
+                                preload="metadata"
+                            ></video>
+
+                            <div class="search-video-info">
+
+                                <strong>
+                                    {{ video.title
+                                       or "Sans titre" }}
+                                </strong>
+
+                                <small>
+                                    @{{ video.username }}
+                                </small>
+
+                                <div class="search-video-stats">
+
+                                    <span>
+                                        ❤️ {{ video.likes_count }}
+                                    </span>
+
+                                    <span>
+                                        💬 {{ video.comments_count }}
+                                    </span>
+
+                                    <span>
+                                        👁️ {{ video.views_count }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="search-empty">
+                    Aucune vidéo trouvée.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+    {% else %}
+
+        <div class="search-empty-state">
+
+            <div class="search-empty-icon">
+                🔍
+            </div>
+
+            <h2>
+                Recherche StreamLocal
+            </h2>
+
+            <p>
+                Trouve des créateurs et des vidéos
+                par mot-clé.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+<style>
+
+.search-page {
+
+    max-width: 1000px;
+
+    margin: 0 auto;
+
+    padding: 40px 20px;
+}
+
+.dashboard-label {
+
+    font-weight: 800;
+
+    color: #ff2d55;
+
+    letter-spacing: 1px;
+
+    font-size: 13px;
+}
+
+.search-header h1 {
+
+    margin: 8px 0 20px;
+
+    font-size: 34px;
+}
+
+.search-form {
+
+    display: flex;
+
+    gap: 10px;
+
+    max-width: 500px;
+}
+
+.search-form input {
+
+    flex: 1;
+
+    padding: 14px 18px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 25px;
+
+    font-size: 15px;
+}
+
+.search-form input:focus {
+
+    outline: none;
+
+    border-color: #111;
+}
+
+.search-form button {
+
+    border: none;
+
+    background: #111;
+
+    color: white;
+
+    padding: 0 24px;
+
+    border-radius: 25px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.search-section {
+
+    margin-top: 35px;
+}
+
+.search-section h2 {
+
+    margin-bottom: 15px;
+
+    font-size: 20px;
+}
+
+.search-empty {
+
+    color: #888;
+}
+
+.search-users-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(180px, 1fr)
+    );
+
+    gap: 15px;
+}
+
+.search-user-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    gap: 8px;
+
+    background: white;
+
+    border: 1px solid #eee;
+
+    border-radius: 16px;
+
+    padding: 20px 15px;
+
+    text-decoration: none;
+
+    color: #111;
+
+    transition: 0.2s;
+}
+
+.search-user-card:hover {
+
+    border-color: #111;
+
+    transform: translateY(-2px);
+}
+
+.search-user-avatar {
+
+    width: 60px;
+
+    height: 60px;
+
+    border-radius: 50%;
+
+    background: #eee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    overflow: hidden;
+}
+
+.search-user-avatar img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.search-user-card small {
+
+    color: #888;
+
+    font-size: 12px;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+.search-videos-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(220px, 1fr)
+    );
+
+    gap: 15px;
+}
+
+.search-video-card {
+
+    display: block;
+
+    background: white;
+
+    border: 1px solid #eee;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    text-decoration: none;
+
+    color: #111;
+
+    transition: 0.2s;
+}
+
+.search-video-card:hover {
+
+    border-color: #111;
+
+    transform: translateY(-2px);
+}
+
+.search-video-card video {
+
+    width: 100%;
+
+    height: 280px;
+
+    object-fit: cover;
+
+    background: #000;
+
+    display: block;
+}
+
+.search-video-info {
+
+    padding: 12px 14px;
+}
+
+.search-video-info strong {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 14px;
+}
+
+.search-video-info small {
+
+    color: #888;
+}
+
+.search-video-stats {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+
+    color: #666;
+}
+
+.search-empty-state {
+
+    text-align: center;
+
+    padding: 80px 20px;
+
+    color: #888;
+}
+
+.search-empty-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 15px;
+}
+
+@media (max-width: 600px) {
+
+    .search-page {
+
+        padding: 25px 15px;
+    }
+
+    .search-form {
+
+        max-width: 100%;
+    }
+
+}
+
+</style>
+
+{% endblock %}

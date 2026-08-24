@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}
+Comptes - Admin StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+
+        <span class="dashboard-label">
+            STREAMLOCAL · ADMIN
+        </span>
+
+        <h1>
+            👤 Comptes
+        </h1>
+
+        <p>
+            {{ accounts|length }} compte(s) au total.
+        </p>
+
+    </div>
+
+    <div class="admin-nav">
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-nav-link">
+            📊 Vue d'ensemble
+        </a>
+
+        <a href="{{ url_for('admin_accounts') }}"
+           class="admin-nav-link active">
+            👤 Comptes
+        </a>
+
+        <a href="{{ url_for('admin_settings') }}"
+           class="admin-nav-link">
+            ⚙️ Paramètres de monétisation
+        </a>
+
+    </div>
+
+    <form
+        method="GET"
+        action="{{ url_for('admin_accounts') }}"
+        class="admin-search-form"
+    >
+
+        <input
+            type="text"
+            name="q"
+            value="{{ search_query }}"
+            placeholder="Rechercher par nom ou email..."
+        >
+
+        <button type="submit">
+            Rechercher
+        </button>
+
+    </form>
+
+    {% if accounts %}
+
+        <div class="admin-table-wrapper">
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Abonnés</th>
+                        <th>Vidéos</th>
+                        <th>Solde</th>
+                        <th>Compte</th>
+                        <th>Monétisation</th>
+                        <th></th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for account in accounts %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    @{{ account.username }}
+                                </strong>
+
+                                <br>
+
+                                <small>
+                                    {{ account.email }}
+                                </small>
+
+                            </td>
+
+                            <td>
+                                {{ account.followers_count }}
+                            </td>
+
+                            <td>
+                                {{ account.videos_count }}
+                            </td>
+
+                            <td>
+                                {{ "{:,.0f}".format(
+                                    account.wallet_balance
+                                ).replace(",", " ") }}
+                                XAF
+                            </td>
+
+                            <td>
+
+                                {% if account.is_active %}
+
+                                    <span class="status-badge active">
+                                        Actif
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge suspended">
+                                        Désactivé
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if account.monetization_status == "active" %}
+
+                                    <span class="status-badge active">
+                                        ✓ Active
+                                    </span>
+
+                                {% elif account.monetization_status == "eligible" %}
+
+                                    <span class="status-badge eligible">
+                                        Éligible
+                                    </span>
+
+                                {% elif account.monetization_status == "suspended" %}
+
+                                    <span class="status-badge suspended">
+                                        Suspendue
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge inactive">
+                                        Non éligible
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for('admin_account_detail', user_id=account.id) }}"
+                                    class="admin-table-link"
+                                >
+                                    Gérer →
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <p class="admin-empty">
+            Aucun compte trouvé.
+        </p>
+
+    {% endif %}
+
+</div>
+
+<style>
+
+.admin-search-form {
+    display: flex;
+    gap: 10px;
+    max-width: 450px;
+    margin-bottom: 25px;
+}
+
+.admin-search-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+}
+
+.admin-search-form button {
+    border: none;
+    background: #111;
+    color: white;
+    padding: 0 22px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.admin-table-wrapper {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 14px 16px;
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f3f3f3;
+    white-space: nowrap;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table small {
+    color: #888;
+}
+
+.admin-table-link {
+    color: #111;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.admin-table-link:hover {
+    text-decoration: underline;
+}
+
+.admin-empty {
+    color: #888;
+    padding: 40px 0;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px 12px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

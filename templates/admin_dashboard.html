@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}
+Administration - StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+
+        <span class="dashboard-label">
+            STREAMLOCAL · ADMIN
+        </span>
+
+        <h1>
+            🛠️ Tableau de bord
+        </h1>
+
+        <p>
+            Vue d'ensemble de la plateforme.
+        </p>
+
+    </div>
+
+    <div class="admin-nav">
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-nav-link active">
+            📊 Vue d'ensemble
+        </a>
+
+        <a href="{{ url_for('admin_accounts') }}"
+           class="admin-nav-link">
+            👤 Comptes
+        </a>
+
+        <a href="{{ url_for('admin_settings') }}"
+           class="admin-nav-link">
+            ⚙️ Paramètres de monétisation
+        </a>
+
+    </div>
+
+    <div class="admin-stats-grid">
+
+        <div class="admin-stat-card">
+            <span>👥</span>
+            <strong>{{ total_users }}</strong>
+            <small>Utilisateurs</small>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>🎬</span>
+            <strong>{{ total_videos }}</strong>
+            <small>Vidéos actives</small>
+        </div>
+
+        <div class="admin-stat-card success">
+            <span>✅</span>
+            <strong>{{ total_active }}</strong>
+            <small>Comptes monétisés</small>
+        </div>
+
+        <div class="admin-stat-card info">
+            <span>⏳</span>
+            <strong>{{ total_eligible }}</strong>
+            <small>Éligibles (en attente)</small>
+        </div>
+
+        <div class="admin-stat-card danger">
+            <span>⚠️</span>
+            <strong>{{ total_suspended }}</strong>
+            <small>Comptes suspendus</small>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>💰</span>
+            <strong>
+                {{ "{:,.0f}".format(total_paid).replace(",", " ") }}
+                XAF
+            </strong>
+            <small>Total versé aux créateurs</small>
+        </div>
+
+    </div>
+
+    <div class="admin-rate-card">
+
+        <div>
+            <strong>Taux de rémunération actuel</strong>
+            <p>
+                {{ current_rate }} XAF pour 1000 vues qualifiées
+                (soit {{ "%.2f"|format(current_rate|float / 1000) }} XAF
+                par vue).
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin_settings') }}"
+           class="admin-button">
+            Modifier
+        </a>
+
+    </div>
+
+</div>
+
+<style>
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-stat-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-stat-card span {
+    font-size: 22px;
+}
+
+.admin-stat-card strong {
+    font-size: 24px;
+}
+
+.admin-stat-card small {
+    color: #888;
+}
+
+.admin-stat-card.success strong { color: #15803d; }
+.admin-stat-card.info strong { color: #1d4ed8; }
+.admin-stat-card.danger strong { color: #b91c1c; }
+
+.admin-rate-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.admin-rate-card p {
+    color: #777;
+    margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+    .admin-page {
+        padding: 25px 15px;
+    }
+}
+
+</style>
+
+{% endblock %}

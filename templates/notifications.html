@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications - StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="notifications-page">
+
+    <div class="notifications-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                STREAMLOCAL
+            </span>
+
+            <h1>
+                🔔 Notifications
+            </h1>
+
+            <p>
+                {% if unread_count > 0 %}
+                    Tu as {{ unread_count }} notification(s) non lue(s).
+                {% else %}
+                    Tu es à jour.
+                {% endif %}
+            </p>
+
+        </div>
+
+        {% if unread_count > 0 %}
+
+            <button
+                type="button"
+                id="read-all-button"
+                class="read-all-button"
+            >
+                Tout marquer comme lu
+            </button>
+
+        {% endif %}
+
+    </div>
+
+    {% if notifications %}
+
+        <div class="notifications-list">
+
+            {% for notification in notifications %}
+
+                <div
+                    class="notification-card
+                    {% if notification.is_read == 0 %}
+                        unread
+                    {% endif %}"
+                    data-notification-id="{{ notification.id }}"
+                >
+
+                    <div class="notification-icon">
+
+                        {% if notification.type == "follow" %}
+
+                            👥
+
+                        {% elif notification.type == "like" %}
+
+                            ❤️
+
+                        {% elif notification.type == "comment" %}
+
+                            💬
+
+                        {% elif notification.type == "share" %}
+
+                            🔗
+
+                        {% elif notification.type == "monetization" %}
+
+                            💰
+
+                        {% else %}
+
+                            🔔
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="notification-content">
+
+                        <p>
+                            {{ notification.message }}
+                        </p>
+
+                        <small>
+                            {{ notification.created_at }}
+                        </small>
+
+                    </div>
+
+                    {% if notification.is_read == 0 %}
+
+                        <button
+                            type="button"
+                            class="mark-read-button"
+                            data-id="{{ notification.id }}"
+                        >
+                            ✓
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-notifications">
+
+            <div class="empty-notification-icon">
+                🔔
+            </div>
+
+            <h2>
+                Aucune notification
+            </h2>
+
+            <p>
+                Tes nouvelles notifications apparaîtront ici.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+<style>
+
+.notifications-page {
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 40px 20px;
+}
+
+.notifications-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+}
+
+.notifications-header h1 {
+
+    margin: 8px 0;
+
+    font-size: 34px;
+}
+
+.notifications-header p {
+
+    color: #777;
+}
+
+.read-all-button {
+
+    border: none;
+
+    background: #111;
+
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 25px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.notifications-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.notification-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    background: white;
+
+    border: 1px solid #eee;
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    transition: 0.2s;
+}
+
+.notification-card.unread {
+
+    border-left: 4px solid #ff2d55;
+
+    background: #fff8fa;
+}
+
+.notification-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+.notification-content {
+
+    flex: 1;
+}
+
+.notification-content p {
+
+    margin: 0;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+.notification-content small {
+
+    display: block;
+
+    color: #888;
+
+    margin-top: 5px;
+}
+
+.mark-read-button {
+
+    width: 35px;
+
+    height: 35px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #eee;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+.mark-read-button:hover {
+
+    background: #111;
+
+    color: white;
+}
+
+.empty-notifications {
+
+    background: white;
+
+    border: 1px solid #eee;
+
+    border-radius: 20px;
+
+    padding: 70px 20px;
+
+    text-align: center;
+}
+
+.empty-notification-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 15px;
+}
+
+.empty-notifications h2 {
+
+    margin-bottom: 8px;
+}
+
+.empty-notifications p {
+
+    color: #777;
+}
+
+@media (max-width: 600px) {
+
+    .notifications-page {
+
+        padding: 25px 15px;
+    }
+
+    .notifications-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .notification-card {
+
+        padding: 14px;
+    }
+
+}
+
+</style>
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        // ==================================================
+        // MARQUER UNE NOTIFICATION COMME LUE
+        // ==================================================
+
+        document
+            .querySelectorAll(".mark-read-button")
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    async function () {
+
+                        const id =
+                            this.dataset.id;
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    `/api/notifications/${id}/read`,
+                                    {
+                                        method: "POST"
+                                    }
+                                );
+
+                            const data =
+                                await response.json();
+
+                            if (data.success) {
+
+                                const card =
+                                    this.closest(
+                                        ".notification-card"
+                                    );
+
+                                if (card) {
+
+                                    card.classList.remove(
+                                        "unread"
+                                    );
+
+                                    this.remove();
+
+                                }
+
+                            }
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erreur notification :",
+                                error
+                            );
+
+                        }
+
+                    }
+                );
+
+            });
+
+        // ==================================================
+        // TOUT MARQUER COMME LU
+        // ==================================================
+
+        const readAllButton =
+            document.getElementById(
+                "read-all-button"
+            );
+
+        if (readAllButton) {
+
+            readAllButton.addEventListener(
+                "click",
+                async function () {
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/notifications/read-all",
+                                {
+                                    method: "POST"
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (data.success) {
+
+                            document
+                                .querySelectorAll(
+                                    ".notification-card"
+                                )
+                                .forEach(card => {
+
+                                    card.classList.remove(
+                                        "unread"
+                                    );
+
+                                });
+
+                            document
+                                .querySelectorAll(
+                                    ".mark-read-button"
+                                )
+                                .forEach(button => {
+
+                                    button.remove();
+
+                                });
+
+                            this.remove();
+
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "Erreur lecture notifications :",
+                            error
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

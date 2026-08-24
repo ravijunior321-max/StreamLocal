@@ -1,0 +1,701 @@
+{% extends "base.html" %}
+
+{% block title %}
+Monétisation - StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="monetization-page">
+
+    <!-- ==================================================
+         HEADER
+    =================================================== -->
+
+    <div class="monetization-header">
+
+        <div>
+
+            <span class="dashboard-label">
+                STREAMLOCAL
+            </span>
+
+            <h1>
+                Monétisation
+            </h1>
+
+            <p>
+                Gère tes revenus et ton portefeuille.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ==================================================
+         STATUT
+    =================================================== -->
+
+    <div class="monetization-status">
+
+        {% if monetization.status == "active" %}
+
+            <span class="status-badge active">
+                ✓ Monétisation active
+            </span>
+
+        {% elif monetization.status == "eligible" %}
+
+            <span class="status-badge eligible">
+                ✓ Tu es éligible à la monétisation
+            </span>
+
+        {% elif monetization.status == "suspended" %}
+
+            <span class="status-badge suspended">
+                ⚠ Monétisation suspendue
+            </span>
+
+        {% else %}
+
+            <span class="status-badge inactive">
+                Monétisation non activée
+            </span>
+
+        {% endif %}
+
+    </div>
+
+    <!-- ==================================================
+         PORTEFEUILLE
+    =================================================== -->
+
+    <div class="wallet-grid">
+
+        <div class="wallet-card main-balance">
+
+            <div class="wallet-icon">
+                💰
+            </div>
+
+            <div>
+
+                <span>
+                    Solde disponible
+                </span>
+
+                <strong>
+                    {{ "%.0f"|format(
+                        wallet.available_balance or 0
+                    ) }}
+                    {{ wallet.currency or "XAF" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="wallet-card">
+
+            <div class="wallet-icon">
+                ⏳
+            </div>
+
+            <div>
+
+                <span>
+                    En attente
+                </span>
+
+                <strong>
+                    {{ "%.0f"|format(
+                        wallet.pending_balance or 0
+                    ) }}
+                    {{ wallet.currency or "XAF" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="wallet-card">
+
+            <div class="wallet-icon">
+                📈
+            </div>
+
+            <div>
+
+                <span>
+                    Total gagné
+                </span>
+
+                <strong>
+                    {{ "%.0f"|format(
+                        wallet.total_earned or 0
+                    ) }}
+                    {{ wallet.currency or "XAF" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="wallet-card">
+
+            <div class="wallet-icon">
+                💸
+            </div>
+
+            <div>
+
+                <span>
+                    Total retiré
+                </span>
+
+                <strong>
+                    {{ "%.0f"|format(
+                        wallet.total_withdrawn or 0
+                    ) }}
+                    {{ wallet.currency or "XAF" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================================================
+         STATISTIQUES DU CRÉATEUR
+    =================================================== -->
+
+    <div class="creator-stats">
+
+        <div class="creator-stat">
+
+            <span>
+                👁️
+            </span>
+
+            <strong>
+                {{ total_views }}
+            </strong>
+
+            <small>
+                Vues
+            </small>
+
+        </div>
+
+        <div class="creator-stat">
+
+            <span>
+                👥
+            </span>
+
+            <strong>
+                {{ total_followers }}
+            </strong>
+
+            <small>
+                Abonnés
+            </small>
+
+        </div>
+
+        <div class="creator-stat">
+
+            <span>
+                🎬
+            </span>
+
+            <strong>
+                {{ total_videos }}
+            </strong>
+
+            <small>
+                Vidéos
+            </small>
+
+        </div>
+
+        <div class="creator-stat">
+
+            <span>
+                📅
+            </span>
+
+            <strong>
+                {{ account_age }}
+            </strong>
+
+            <small>
+                Jours sur StreamLocal
+            </small>
+
+        </div>
+
+    </div>
+
+    <!-- ==================================================
+         CONDITIONS DE MONÉTISATION
+    =================================================== -->
+
+    <div class="eligibility-card">
+
+        <h2>
+            🚀 Conditions de monétisation
+        </h2>
+
+        <p>
+            Atteins les conditions suivantes pour
+            débloquer la monétisation.
+        </p>
+
+        <!-- ==============================================
+             ABONNÉS
+        =============================================== -->
+
+        <div class="requirement">
+
+            <div class="requirement-header">
+
+                <strong>
+                    👥 Abonnés
+                </strong>
+
+                <span>
+
+                    {{ total_followers }}
+
+                    /
+
+                    {{ minimum_followers }}
+
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: {{ progress_followers }}%;"
+                ></div>
+
+            </div>
+
+            {% if followers_ok %}
+
+                <small class="requirement-success">
+                    ✅ Condition remplie
+                </small>
+
+            {% else %}
+
+                <small class="requirement-error">
+
+                    ❌ Il manque
+
+                    {{ minimum_followers - total_followers }}
+
+                    abonnés
+
+                </small>
+
+            {% endif %}
+
+        </div>
+
+        <!-- ==============================================
+             VUES
+        =============================================== -->
+
+        <div class="requirement">
+
+            <div class="requirement-header">
+
+                <strong>
+                    👁️ Vues
+                </strong>
+
+                <span>
+
+                    {{ total_views }}
+
+                    /
+
+                    {{ minimum_views }}
+
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: {{ progress_views }}%;"
+                ></div>
+
+            </div>
+
+            {% if views_ok %}
+
+                <small class="requirement-success">
+                    ✅ Condition remplie
+                </small>
+
+            {% else %}
+
+                <small class="requirement-error">
+
+                    ❌ Il manque
+
+                    {{ minimum_views - total_views }}
+
+                    vues
+
+                </small>
+
+            {% endif %}
+
+        </div>
+
+        <!-- ==============================================
+             VIDÉOS
+        =============================================== -->
+
+        <div class="requirement">
+
+            <div class="requirement-header">
+
+                <strong>
+                    🎬 Vidéos publiées
+                </strong>
+
+                <span>
+
+                    {{ total_videos }}
+
+                    /
+
+                    {{ minimum_videos }}
+
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: {{ progress_videos }}%;"
+                ></div>
+
+            </div>
+
+            {% if videos_ok %}
+
+                <small class="requirement-success">
+                    ✅ Condition remplie
+                </small>
+
+            {% else %}
+
+                <small class="requirement-error">
+
+                    ❌ Il manque
+
+                    {{ minimum_videos - total_videos }}
+
+                    vidéos
+
+                </small>
+
+            {% endif %}
+
+        </div>
+
+        <!-- ==============================================
+             ANCIENNETÉ
+        =============================================== -->
+
+        <div class="requirement">
+
+            <div class="requirement-header">
+
+                <strong>
+                    📅 Ancienneté du compte
+                </strong>
+
+                <span>
+
+                    {{ account_age }}
+
+                    /
+
+                    {{ minimum_account_age }}
+
+                    jours
+
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width: {{ progress_age }}%;"
+                ></div>
+
+            </div>
+
+            {% if account_age_ok %}
+
+                <small class="requirement-success">
+                    ✅ Condition remplie
+                </small>
+
+            {% else %}
+
+                <small class="requirement-error">
+
+                    ❌ Il manque
+
+                    {{ minimum_account_age - account_age }}
+
+                    jours
+
+                </small>
+
+            {% endif %}
+
+        </div>
+
+        <!-- ==============================================
+             MESSAGE FINAL
+        =============================================== -->
+
+        {% if eligible %}
+
+            <div class="monetization-success">
+
+                <h3>
+                    🎉 Félicitations !
+                </h3>
+
+                <p>
+                    Tu remplis toutes les conditions
+                    nécessaires pour la monétisation.
+                </p>
+
+                {% if monetization.status == "eligible" %}
+
+                    <p>
+                        Ton compte est prêt à être activé.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% else %}
+
+            <div class="monetization-info">
+
+                <strong>
+                    💡 Continue tes efforts !
+                </strong>
+
+                <p>
+                    Publie régulièrement des vidéos et
+                    développe ta communauté pour atteindre
+                    les conditions de monétisation.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- ==================================================
+         RETRAITS
+    =================================================== -->
+
+    {% if monetization.status == "active" %}
+
+    <div class="withdraw-section">
+
+        <h2>
+            💳 Ton argent
+        </h2>
+
+        <p>
+            Tu peux demander un retrait de tes revenus
+            disponibles.
+        </p>
+
+        {% if wallet.available_balance >= minimum_withdrawal %}
+
+            <a
+                href="{{ url_for('withdraw') }}"
+                class="withdraw-button"
+            >
+                💸 Retirer mes gains
+            </a>
+
+        {% else %}
+
+            <p>
+                Montant minimum pour un retrait :
+                <strong>
+                    {{ minimum_withdrawal }} XAF
+                </strong>
+            </p>
+
+        {% endif %}
+
+        <a
+            href="{{ url_for('withdrawals') }}"
+            class="withdraw-button"
+        >
+            📋 Historique des retraits
+        </a>
+
+    </div>
+
+    {% endif %}
+
+    <!-- ==================================================
+         REVENUS
+    =================================================== -->
+
+    <div class="history-section">
+
+        <h2>
+            📊 Revenus récents
+        </h2>
+
+        {% if earnings %}
+
+        <div class="history-list">
+
+            {% for earning in earnings %}
+
+            <div class="history-item">
+
+                <div>
+
+                    <strong>
+                        {{ earning.description
+                           or earning.source }}
+                    </strong>
+
+                    <small>
+                        {{ earning.created_at }}
+                    </small>
+
+                </div>
+
+                <span class="earning-amount">
+
+                    +{{ "%.0f"|format(
+                        earning.amount or 0
+                    ) }}
+
+                    {{ earning.currency or "XAF" }}
+
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p class="empty-history">
+            Aucun revenu pour le moment.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+    <!-- ==================================================
+         HISTORIQUE DES RETRAITS
+    =================================================== -->
+
+    <div class="history-section">
+
+        <h2>
+            💸 Historique des retraits
+        </h2>
+
+        {% if withdrawals %}
+
+        <div class="history-list">
+
+            {% for withdrawal in withdrawals %}
+
+            <div class="history-item">
+
+                <div>
+
+                    <strong>
+                        Retrait de
+                        {{ "%.0f"|format(
+                            withdrawal.amount or 0
+                        ) }}
+                        {{ withdrawal.currency or "XAF" }}
+                    </strong>
+
+                    <small>
+
+                        {{ withdrawal.operator }}
+
+                        -
+
+                        {{ withdrawal.phone }}
+
+                    </small>
+
+                    <small>
+                        {{ withdrawal.created_at }}
+                    </small>
+
+                </div>
+
+                <span
+                    class="withdraw-status
+                    {{ withdrawal.status }}"
+                >
+
+                    {{ withdrawal.status }}
+
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p class="empty-history">
+            Aucun retrait effectué.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

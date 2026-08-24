@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}StreamLocal - Accueil{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="badge">
+            La plateforme vidéo locale
+        </span>
+
+        <h1>
+            Découvre.
+            <br>
+            Crée.
+            <br>
+            Partage.
+        </h1>
+
+        <p>
+            StreamLocal permet à chacun de découvrir
+            des vidéos, de partager son talent et,
+            de monétiser son contenu.
+        </p>
+
+        {% if session.get("user_id") %}
+
+            <a href="{{ url_for('profile') }}"
+               class="primary-button">
+                Mon profil
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('register') }}"
+               class="primary-button">
+                Commencer maintenant
+            </a>
+
+            <a href="{{ url_for('login') }}"
+               class="secondary-button">
+                Se connecter
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

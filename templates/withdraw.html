@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}
+Retirer mes gains - StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="withdraw-page">
+
+    <div class="withdraw-header">
+
+        <span>
+            STREAMLOCAL
+        </span>
+
+        <h1>
+            Retirer mes gains
+        </h1>
+
+        <p>
+            Choisis ton moyen de paiement et indique
+            le montant à retirer.
+        </p>
+
+    </div>
+
+    <!-- ==================================================
+         SOLDE
+    =================================================== -->
+
+    <div class="withdraw-balance">
+
+        <span>
+            Solde disponible
+        </span>
+
+        <strong>
+
+            {{ "%.0f"|format(
+                wallet.available_balance
+            ) }}
+
+            {{ wallet.currency }}
+
+        </strong>
+
+    </div>
+
+    <!-- ==================================================
+         FORMULAIRE
+    =================================================== -->
+
+    <form
+        method="POST"
+        class="withdraw-form"
+    >
+
+        <!-- Montant -->
+
+        <div class="form-group">
+
+            <label for="amount">
+                Montant à retirer
+            </label>
+
+            <div class="amount-input">
+
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    min="{{ minimum_withdrawal }}"
+                    step="100"
+                    placeholder="Ex : {{ minimum_withdrawal }}"
+                    required
+                >
+
+                <span>
+                    FCFA
+                </span>
+
+            </div>
+
+            <small>
+                Minimum : {{ "{:,.0f}".format(minimum_withdrawal).replace(",", " ") }} FCFA
+            </small>
+
+        </div>
+
+        <!-- Opérateur -->
+
+        <div class="form-group">
+
+            <label>
+                Opérateur
+            </label>
+
+            <div class="operator-selection">
+
+                <label class="operator-option">
+
+                    <input
+                        type="radio"
+                        name="operator"
+                        value="MOMO"
+                        required
+                    >
+
+                    <div>
+                        <strong>
+                            MTN Mobile Money
+                        </strong>
+
+                        <small>
+                            MTN MoMo
+                        </small>
+                    </div>
+
+                </label>
+
+                <label class="operator-option">
+
+                    <input
+                        type="radio"
+                        name="operator"
+                        value="OM"
+                    >
+
+                    <div>
+                        <strong>
+                            Orange Money
+                        </strong>
+
+                        <small>
+                            Orange Money
+                        </small>
+                    </div>
+
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Numéro -->
+
+        <div class="form-group">
+
+            <label for="phone">
+                Numéro Mobile Money
+            </label>
+
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="237677123456"
+                pattern="2376[0-9]{8}"
+                required
+            >
+
+            <small>
+                Format : 2376XXXXXXXX
+            </small>
+
+        </div>
+
+        <!-- Simulation -->
+
+        <div class="simulation-warning">
+
+            <strong>
+                🧪 Mode simulation
+            </strong>
+
+            <p>
+                Aucun argent réel ne sera envoyé.
+                Le retrait sera automatiquement marqué
+                comme réussi pour tester le fonctionnement
+                de StreamLocal.
+            </p>
+
+        </div>
+
+        <!-- Bouton -->
+
+        <button
+            type="submit"
+            class="withdraw-submit"
+        >
+
+            💸 Simuler le retrait
+
+        </button>
+
+        <a
+            href="{{ url_for('monetization_dashboard') }}"
+            class="cancel-withdraw"
+        >
+            Annuler
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

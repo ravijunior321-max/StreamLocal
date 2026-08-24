@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+
+{% block title %}
+@{{ account_user.username }} - Admin StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+
+        <span class="dashboard-label">
+            STREAMLOCAL · ADMIN
+        </span>
+
+        <a href="{{ url_for('admin_accounts') }}"
+           class="admin-back-link">
+            ← Retour à la liste des comptes
+        </a>
+
+        <h1>
+            @{{ account_user.username }}
+        </h1>
+
+        <p>
+            {{ account_user.email }}
+            · Inscrit le
+            {{ account_user.created_at }}
+            · {{ account_age }} jour(s)
+        </p>
+
+    </div>
+
+    <!-- ==================================================
+         STATUT ACTUEL
+    =================================================== -->
+
+    <div class="admin-status-row">
+
+        <div>
+
+            <small>Compte</small>
+
+            {% if account_user.is_active %}
+
+                <span class="status-badge active">
+                    Actif
+                </span>
+
+            {% else %}
+
+                <span class="status-badge suspended">
+                    Désactivé
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        <div>
+
+            <small>Monétisation</small>
+
+            {% if monetization and monetization.status == "active" %}
+
+                <span class="status-badge active">
+                    ✓ Active
+                </span>
+
+            {% elif monetization and monetization.status == "eligible" %}
+
+                <span class="status-badge eligible">
+                    Éligible
+                </span>
+
+            {% elif monetization and monetization.status == "suspended" %}
+
+                <span class="status-badge suspended">
+                    Suspendue
+                </span>
+
+            {% else %}
+
+                <span class="status-badge inactive">
+                    Non éligible
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        {% if monetization and monetization.status == "suspended"
+              and monetization.suspension_reason %}
+
+            <div class="admin-suspension-reason">
+                <small>Motif de suspension</small>
+                <p>{{ monetization.suspension_reason }}</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- ==================================================
+         STATISTIQUES
+    =================================================== -->
+
+    <div class="admin-detail-grid">
+
+        <div class="admin-detail-card">
+            <span>👥</span>
+            <strong>{{ followers_count }}</strong>
+            <small>
+                Abonnés
+                <br>
+                (min. {{ settings.minimum_followers }})
+            </small>
+        </div>
+
+        <div class="admin-detail-card">
+            <span>👁️</span>
+            <strong>{{ views_count }}</strong>
+            <small>
+                Vues
+                <br>
+                (min. {{ settings.minimum_views }})
+            </small>
+        </div>
+
+        <div class="admin-detail-card">
+            <span>🎬</span>
+            <strong>{{ videos_count }}</strong>
+            <small>
+                Vidéos
+                <br>
+                (min. {{ settings.minimum_videos }})
+            </small>
+        </div>
+
+        <div class="admin-detail-card">
+            <span>📅</span>
+            <strong>{{ account_age }}</strong>
+            <small>
+                Jours
+                <br>
+                (min. {{ settings.minimum_account_age }})
+            </small>
+        </div>
+
+        <div class="admin-detail-card">
+            <span>💰</span>
+            <strong>
+                {{ "{:,.0f}".format(
+                    wallet.available_balance if wallet else 0
+                ).replace(",", " ") }}
+            </strong>
+            <small>Solde (XAF)</small>
+        </div>
+
+        <div class="admin-detail-card">
+            <span>📈</span>
+            <strong>
+                {{ "{:,.0f}".format(
+                    wallet.total_earned if wallet else 0
+                ).replace(",", " ") }}
+            </strong>
+            <small>Total gagné (XAF)</small>
+        </div>
+
+    </div>
+
+    {% if eligible %}
+
+        <div class="admin-eligible-banner">
+            ✅ Ce compte remplit toutes les conditions
+            d'éligibilité automatique.
+        </div>
+
+    {% else %}
+
+        <div class="admin-noteligible-banner">
+            ❌ Ce compte ne remplit pas encore toutes
+            les conditions automatiques — tu peux tout
+            de même forcer l'activation manuellement
+            ci-dessous.
+        </div>
+
+    {% endif %}
+
+    <!-- ==================================================
+         ACTIONS - MONÉTISATION
+    =================================================== -->
+
+    <div class="admin-actions-card">
+
+        <h2>
+            🎛️ Contrôle de la monétisation
+        </h2>
+
+        <p>
+            Change manuellement le statut de monétisation
+            de ce créateur, peu importe s'il remplit les
+            conditions automatiques ou non.
+        </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('admin_update_monetization', user_id=account_user.id) }}"
+            class="admin-inline-form"
+        >
+
+            <select name="status" required>
+
+                <option value="not_eligible"
+                    {% if monetization and monetization.status == "not_eligible" %}selected{% endif %}>
+                    Non éligible
+                </option>
+
+                <option value="eligible"
+                    {% if monetization and monetization.status == "eligible" %}selected{% endif %}>
+                    Éligible (en attente)
+                </option>
+
+                <option value="active"
+                    {% if monetization and monetization.status == "active" %}selected{% endif %}>
+                    ✓ Activer la monétisation
+                </option>
+
+                <option value="suspended"
+                    {% if monetization and monetization.status == "suspended" %}selected{% endif %}>
+                    ⚠ Suspendre la monétisation
+                </option>
+
+            </select>
+
+            <input
+                type="text"
+                name="suspension_reason"
+                placeholder="Motif (si suspension)"
+                value="{{ monetization.suspension_reason if monetization else '' }}"
+            >
+
+            <button type="submit" class="admin-button">
+                Appliquer
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- ==================================================
+         ACTIONS - COMPTE
+    =================================================== -->
+
+    <div class="admin-actions-card">
+
+        <h2>
+            🔐 Accès au compte
+        </h2>
+
+        <p>
+            {% if account_user.is_active %}
+                Ce compte peut actuellement se connecter
+                normalement.
+            {% else %}
+                Ce compte est désactivé : l'utilisateur ne
+                peut plus se connecter.
+            {% endif %}
+        </p>
+
+        {% if account_user.id != session["user_id"] %}
+
+            <form
+                method="POST"
+                action="{{ url_for('admin_toggle_active', user_id=account_user.id) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="admin-button {% if account_user.is_active %}danger{% endif %}"
+                >
+
+                    {% if account_user.is_active %}
+                        Désactiver ce compte
+                    {% else %}
+                        Réactiver ce compte
+                    {% endif %}
+
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <p class="admin-hint">
+                Tu ne peux pas désactiver ton propre
+                compte administrateur.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    <!-- ==================================================
+         REVENUS RÉCENTS
+    =================================================== -->
+
+    <div class="admin-actions-card">
+
+        <h2>
+            📊 Revenus récents
+        </h2>
+
+        {% if recent_earnings %}
+
+            <div class="admin-earnings-list">
+
+                {% for earning in recent_earnings %}
+
+                    <div class="admin-earning-row">
+
+                        <span>
+                            {{ earning.description
+                               or earning.source }}
+                        </span>
+
+                        <strong>
+                            +{{ "%.2f"|format(earning.amount) }}
+                            {{ earning.currency }}
+                        </strong>
+
+                        <small>
+                            {{ earning.created_at }}
+                        </small>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="admin-hint">
+                Aucun revenu enregistré pour ce créateur.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<style>
+
+.admin-back-link {
+    display: inline-block;
+    color: #888;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 10px 0 5px;
+}
+
+.admin-back-link:hover {
+    text-decoration: underline;
+}
+
+.admin-header h1 {
+    margin: 5px 0;
+    font-size: 30px;
+}
+
+.admin-header p {
+    color: #777;
+    font-size: 14px;
+}
+
+.admin-status-row {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.admin-status-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-status-row small {
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-suspension-reason {
+    background: #fee2e2;
+    border-radius: 12px;
+    padding: 10px 15px;
+    max-width: 300px;
+}
+
+.admin-suspension-reason p {
+    color: #b91c1c;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.admin-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.admin-detail-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+}
+
+.admin-detail-card span {
+    font-size: 20px;
+}
+
+.admin-detail-card strong {
+    display: block;
+    font-size: 20px;
+    margin: 4px 0;
+}
+
+.admin-detail-card small {
+    color: #888;
+    font-size: 11px;
+}
+
+.admin-eligible-banner {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.admin-noteligible-banner {
+    background: #fef9c3;
+    color: #854d0e;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.admin-actions-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.admin-actions-card h2 {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.admin-actions-card p {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.admin-inline-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-inline-form select,
+.admin-inline-form input[type="text"] {
+    padding: 11px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.admin-inline-form input[type="text"] {
+    flex: 1;
+    min-width: 180px;
+}
+
+.admin-button.danger {
+    background: #b91c1c;
+}
+
+.admin-hint {
+    color: #888;
+    font-size: 13px;
+}
+
+.admin-earnings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-earning-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f3f3;
+    font-size: 14px;
+}
+
+.admin-earning-row:last-child {
+    border-bottom: none;
+}
+
+.admin-earning-row strong {
+    color: #15803d;
+}
+
+.admin-earning-row small {
+    color: #999;
+    white-space: nowrap;
+}
+
+</style>
+
+{% endblock %}

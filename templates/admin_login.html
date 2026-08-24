@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - StreamLocal{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card admin-login-card">
+
+        <div class="auth-header">
+
+            <span class="dashboard-label">
+                STREAMLOCAL
+            </span>
+
+            <h1>🛠️ Administration</h1>
+
+            <p>
+                Accès réservé aux administrateurs de la
+                plateforme.
+            </p>
+
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('admin_login') }}"
+        >
+
+            <div class="form-group">
+
+                <label>
+                    Email administrateur
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="admin@streamlocal.com"
+                    required
+                    autofocus
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Mot de passe
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Mot de passe administrateur"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="primary-button full-width"
+            >
+                Accéder à l'administration
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+            <a href="{{ url_for('login') }}">
+                ← Retour à la connexion classique
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+<style>
+
+.admin-login-card {
+    border-top: 4px solid #111;
+}
+
+</style>
+
+{% endblock %}

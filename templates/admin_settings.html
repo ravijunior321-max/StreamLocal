@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}
+Paramètres de monétisation - Admin
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+
+        <span class="dashboard-label">
+            STREAMLOCAL · ADMIN
+        </span>
+
+        <h1>
+            ⚙️ Paramètres de monétisation
+        </h1>
+
+        <p>
+            Ces valeurs s'appliquent à tous les créateurs de
+            la plateforme.
+        </p>
+
+    </div>
+
+    <div class="admin-nav">
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-nav-link">
+            📊 Vue d'ensemble
+        </a>
+
+        <a href="{{ url_for('admin_accounts') }}"
+           class="admin-nav-link">
+            👤 Comptes
+        </a>
+
+        <a href="{{ url_for('admin_settings') }}"
+           class="admin-nav-link active">
+            ⚙️ Paramètres de monétisation
+        </a>
+
+    </div>
+
+    <form
+        method="POST"
+        action="{{ url_for('admin_settings') }}"
+        class="admin-settings-form"
+    >
+
+        <!-- ==========================================
+             REVENU PAR VUE
+        =========================================== -->
+
+        <div class="admin-settings-section">
+
+            <h2>
+                💰 Rémunération
+            </h2>
+
+            <div class="admin-form-group">
+
+                <label for="revenue_per_1000_views">
+                    Montant généré pour 1000 vues qualifiées
+                    (XAF)
+                </label>
+
+                <input
+                    type="number"
+                    id="revenue_per_1000_views"
+                    name="revenue_per_1000_views"
+                    step="0.01"
+                    min="0"
+                    value="{{ revenue_per_1000_views }}"
+                    required
+                >
+
+                <small>
+                    Une vue qualifiée (≥ 60 secondes de
+                    visionnage) rapporte actuellement
+                    <strong>
+                        {{ "%.2f"|format(
+                            revenue_per_1000_views|float / 1000
+                        ) }} XAF
+                    </strong>
+                    au créateur.
+                </small>
+
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             CONDITIONS D'ÉLIGIBILITÉ
+        =========================================== -->
+
+        <div class="admin-settings-section">
+
+            <h2>
+                🚀 Conditions d'éligibilité à la monétisation
+            </h2>
+
+            <p class="admin-settings-hint">
+                Un créateur devient automatiquement
+                <strong>éligible</strong> lorsqu'il remplit
+                toutes ces conditions. Tu peux ensuite
+                l'activer manuellement depuis la fiche du
+                compte.
+            </p>
+
+            <div class="admin-form-group">
+
+                <label for="minimum_followers">
+                    👥 Nombre minimum d'abonnés
+                </label>
+
+                <input
+                    type="number"
+                    id="minimum_followers"
+                    name="minimum_followers"
+                    min="0"
+                    value="{{ settings.minimum_followers.setting_value }}"
+                    required
+                >
+
+            </div>
+
+            <div class="admin-form-group">
+
+                <label for="minimum_views">
+                    👁️ Nombre minimum de vues
+                </label>
+
+                <input
+                    type="number"
+                    id="minimum_views"
+                    name="minimum_views"
+                    min="0"
+                    value="{{ settings.minimum_views.setting_value }}"
+                    required
+                >
+
+            </div>
+
+            <div class="admin-form-group">
+
+                <label for="minimum_videos">
+                    🎬 Nombre minimum de vidéos publiées
+                </label>
+
+                <input
+                    type="number"
+                    id="minimum_videos"
+                    name="minimum_videos"
+                    min="0"
+                    value="{{ settings.minimum_videos.setting_value }}"
+                    required
+                >
+
+            </div>
+
+            <div class="admin-form-group">
+
+                <label for="minimum_account_age">
+                    📅 Ancienneté minimale du compte (jours)
+                </label>
+
+                <input
+                    type="number"
+                    id="minimum_account_age"
+                    name="minimum_account_age"
+                    min="0"
+                    value="{{ settings.minimum_account_age.setting_value }}"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             RETRAIT
+        =========================================== -->
+
+        <div class="admin-settings-section">
+
+            <h2>
+                💳 Retraits
+            </h2>
+
+            <div class="admin-form-group">
+
+                <label for="minimum_withdrawal">
+                    Montant minimum de retrait (XAF)
+                </label>
+
+                <input
+                    type="number"
+                    id="minimum_withdrawal"
+                    name="minimum_withdrawal"
+                    min="0"
+                    value="{{ settings.minimum_withdrawal.setting_value }}"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+        <button type="submit" class="admin-button full-width">
+            Enregistrer les modifications
+        </button>
+
+    </form>
+
+</div>
+
+<style>
+
+.admin-settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 700px;
+}
+
+.admin-settings-section {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 25px;
+}
+
+.admin-settings-section h2 {
+    font-size: 19px;
+    margin-bottom: 8px;
+}
+
+.admin-settings-hint {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.admin-form-group {
+    margin-bottom: 18px;
+}
+
+.admin-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.admin-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.admin-form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.admin-form-group input:focus {
+    outline: none;
+    border-color: #111;
+}
+
+.admin-form-group small {
+    display: block;
+    color: #888;
+    margin-top: 6px;
+    font-size: 13px;
+}
+
+.admin-button.full-width {
+    width: 100%;
+    padding: 15px;
+    font-size: 15px;
+}
+
+</style>
+
+{% endblock %}

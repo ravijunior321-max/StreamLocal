@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}
+Historique des retraits - StreamLocal
+{% endblock %}
+
+{% block content %}
+
+<div class="withdrawals-page">
+
+    <div class="page-header">
+
+        <span>STREAMLOCAL</span>
+
+        <h1>Historique des retraits</h1>
+
+        <p>
+            Consulte tous les retraits effectués depuis ton compte.
+        </p>
+
+    </div>
+
+    {% if withdrawals %}
+
+        <div class="withdrawals-list">
+
+            {% for withdrawal in withdrawals %}
+
+                <div class="withdrawal-card">
+
+                    <div class="withdrawal-top">
+
+                        <div>
+
+                            <strong>
+                                {{ "{:,.0f}".format(
+                                    withdrawal.amount
+                                ).replace(",", " ")
+                                }}
+                                {{ withdrawal.currency }}
+                            </strong>
+
+                            <small>
+                                {{ withdrawal.created_at }}
+                            </small>
+
+                        </div>
+
+                        {% if withdrawal.status == "completed" %}
+
+                            <span class="status completed">
+                                ✓ Réussi
+                            </span>
+
+                        {% elif withdrawal.status == "pending" %}
+
+                            <span class="status pending">
+                                ⏳ En attente
+                            </span>
+
+                        {% elif withdrawal.status == "processing" %}
+
+                            <span class="status processing">
+                                🔄 Traitement
+                            </span>
+
+                        {% else %}
+
+                            <span class="status failed">
+                                ✕ Échoué
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="withdrawal-info">
+
+                        <div>
+                            <span>Opérateur</span>
+
+                            <strong>
+
+                                {% if withdrawal.operator == "MOMO" %}
+                                    MTN Mobile Money
+                                {% else %}
+                                    Orange Money
+                                {% endif %}
+
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Numéro</span>
+
+                            <strong>
+                                {{ withdrawal.phone }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Référence</span>
+
+                            <strong>
+                                {{ withdrawal.payment_reference
+                                   or "—" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-withdrawals">
+
+            <div class="empty-icon">
+                💸
+            </div>
+
+            <h2>
+                Aucun retrait
+            </h2>
+
+            <p>
+                Tu n'as encore effectué aucun retrait.
+            </p>
+
+            <a
+                href="{{ url_for('withdraw') }}"
+            >
+                Effectuer un retrait
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

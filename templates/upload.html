@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Publier - StreamLocal{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+
+            <h1>Publier une vidéo 🎬</h1>
+
+            <p>
+                Partage ton contenu avec la communauté StreamLocal.
+            </p>
+
+        </div>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="form-group">
+
+                <label>
+                    Vidéo
+                </label>
+
+                <input
+                    type="file"
+                    name="video"
+                    accept="video/*"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Titre
+                </label>
+
+                <input
+                    type="text"
+                    name="title"
+                    maxlength="150"
+                    placeholder="Titre de ta vidéo"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    placeholder="Décris ta vidéo..."
+                ></textarea>
+
+            </div>
+
+
+
+
+            <button
+                type="submit"
+                class="primary-button full-width"
+            >
+                Publier la vidéo
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

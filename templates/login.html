@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - StreamLocal{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+
+            <h1>Bienvenue 👋</h1>
+
+            <p>
+                Connecte-toi à ton compte StreamLocal.
+            </p>
+
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('login') }}"
+        >
+
+            <div class="form-group">
+
+                <label>
+                    Adresse email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="exemple@email.com"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Mot de passe
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Ton mot de passe"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="primary-button full-width"
+            >
+                Se connecter
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+
+            Pas encore de compte ?
+
+            <a href="{{ url_for('register') }}">
+                Créer un compte
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

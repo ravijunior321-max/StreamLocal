@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - StreamLocal{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+
+            {% if user.profile_photo %}
+
+                <img
+                    src="{{ user.profile_photo }}"
+                    alt="Photo de profil"
+                >
+
+            {% else %}
+
+                {{ user.username[0]|upper }}
+
+            {% endif %}
+
+        </div>
+
+        <h1>
+            @{{ user.username }}
+        </h1>
+
+        <p class="profile-bio">
+
+            {% if user.bio %}
+
+                {{ user.bio }}
+
+            {% else %}
+
+                Aucun contenu dans la bio pour le moment.
+
+            {% endif %}
+
+        </p>
+
+        <div class="stats">
+
+            <div>
+                <strong>{{ videos }}</strong>
+                <span>Vidéos</span>
+            </div>
+
+            <div>
+                <strong>{{ followers }}</strong>
+                <span>Abonnés</span>
+            </div>
+
+            <div>
+                <strong>{{ following }}</strong>
+                <span>Abonnements</span>
+            </div>
+
+            <div>
+                <strong>{{ total_likes_received }}</strong>
+                <span>❤️ Likes reçus</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+
+            <h2>💰 Monétisation</h2>
+
+            {% if monetization %}
+
+                <p>
+                    Statut :
+                    <strong>
+                        {{ monetization.status }}
+                    </strong>
+                </p>
+
+            {% else %}
+
+                <p>
+                    Monétisation non configurée.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h2>💳 Portefeuille</h2>
+
+            {% if wallet %}
+
+                <p>
+                    Solde disponible :
+                </p>
+
+                <strong class="money">
+                    {{ wallet.balance }} FCFA
+                </strong>
+
+                <p>
+                    Total gagné :
+                    {{ wallet.total_earned }} FCFA
+                </p>
+
+            {% else %}
+
+                <p>
+                    Portefeuille indisponible.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==================================================
+     VIDÉOS QUE J'AI AIMÉES
+=================================================== -->
+
+<div class="activity-section">
+
+    <h2>
+        ❤️ Vidéos que j'ai aimées
+    </h2>
+
+    {% if liked_videos %}
+
+        <div class="liked-videos-grid">
+
+            {% for video in liked_videos %}
+
+                <a
+                    href="{{ url_for('feed') }}"
+                    class="liked-video-card"
+                    title="{{ video.title or 'Sans titre' }}"
+                >
+
+                    <video
+                        src="{{ video.video_url }}"
+                        muted
+                        preload="metadata"
+                    ></video>
+
+                    <div class="liked-video-overlay">
+
+                        <strong>
+                            {{ video.title or "Sans titre" }}
+                        </strong>
+
+                        <small>
+                            @{{ video.creator_username }}
+                        </small>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p class="activity-empty">
+            Tu n'as encore aimé aucune vidéo.
+        </p>
+
+    {% endif %}
+
+</div>
+
+<!-- ==================================================
+     COMMENTAIRES REÇUS SUR MES VIDÉOS
+=================================================== -->
+
+<div class="activity-section">
+
+    <h2>
+        💬 Commentaires reçus
+    </h2>
+
+    {% if my_comments %}
+
+        <div class="my-comments-list">
+
+            {% for comment in my_comments %}
+
+                <div class="my-comment-card">
+
+                    <div class="commenter-avatar">
+
+                        {% if comment.commenter_photo %}
+
+                            <img
+                                src="{{ comment.commenter_photo }}"
+                                alt="Profil"
+                            >
+
+                        {% else %}
+
+                            {{ comment.commenter_username[0]|upper }}
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="my-comment-text">
+
+                        <strong>
+                            @{{ comment.commenter_username }}
+                        </strong>
+
+                        <p>
+                            "{{ comment.content }}"
+                        </p>
+
+                        <small>
+                            Sur ta vidéo
+                            <strong>
+                                {{ comment.video_title
+                                   or "Sans titre" }}
+                            </strong>
+                            · {{ comment.created_at }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p class="activity-empty">
+            Aucun commentaire reçu pour le moment.
+        </p>
+
+    {% endif %}
+
+</div>
+
+<style>
+
+.activity-section {
+    max-width: 900px;
+    margin: 30px auto 0;
+    padding: 0 20px;
+}
+
+.activity-section h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.activity-empty {
+    color: #888;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 25px;
+    text-align: center;
+}
+
+.liked-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(160px, 1fr)
+    );
+    gap: 12px;
+}
+
+.liked-video-card {
+    position: relative;
+    display: block;
+    aspect-ratio: 9 / 14;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    text-decoration: none;
+    color: white;
+}
+
+.liked-video-card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.liked-video-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0)
+    );
+}
+
+.liked-video-overlay strong {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 12.5px;
+    line-height: 1.3;
+}
+
+.liked-video-overlay small {
+    display: block;
+    color: #ddd;
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.my-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.my-comment-card {
+    display: flex;
+    gap: 14px;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 16px 18px;
+}
+
+.commenter-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.commenter-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.my-comment-text {
+    flex: 1;
+}
+
+.my-comment-text strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.my-comment-text p {
+    font-size: 14.5px;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.my-comment-text small {
+    color: #888;
+    font-size: 12.5px;
+}
+
+@media (max-width: 600px) {
+
+    .liked-videos-grid {
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(120px, 1fr)
+        );
+    }
+
+}
+
+</style>
+
+{% endblock %}
