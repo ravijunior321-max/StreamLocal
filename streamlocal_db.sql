@@ -21,6 +21,17 @@ SET time_zone = "+00:00";
 -- Base de données : `streamlocal_db`
 --
 
+-- ============================================================
+-- `streamlocal_db` - Script de creation de la base de donnees
+-- ============================================================
+
+CREATE DATABASE IF NOT EXISTS streamlocal_db
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE streamlocal_db;
+
+
 -- --------------------------------------------------------
 
 --
