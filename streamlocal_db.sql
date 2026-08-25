@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : ven. 21 août 2026 à 23:27
+-- Généré le : mar. 25 août 2026 à 03:12
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -112,7 +112,8 @@ CREATE TABLE `creator_earnings` (
 
 INSERT INTO `creator_earnings` (`id`, `user_id`, `video_id`, `source`, `amount`, `currency`, `description`, `status`, `created_at`, `approved_at`, `view_id`) VALUES
 (1, 17, 8, 'video_view', 500.00, 'XAF', 'Revenu généré par une vue qualifiée de 60 secondes', 'approved', '2026-08-21 19:37:22', '2026-08-21 19:37:22', 57),
-(2, 17, 8, 'video_view', 500.00, 'XAF', 'Revenu généré par une vue qualifiée de 60 secondes', 'approved', '2026-08-21 19:49:17', '2026-08-21 19:49:17', 58);
+(2, 17, 8, 'video_view', 500.00, 'XAF', 'Revenu généré par une vue qualifiée de 60 secondes', 'approved', '2026-08-21 19:49:17', '2026-08-21 19:49:17', 58),
+(3, 17, 8, 'video_view', 500.00, 'XAF', 'Revenu généré par une vue qualifiée de 60 secondes', 'approved', '2026-08-23 16:19:47', '2026-08-23 16:19:47', 59);
 
 -- --------------------------------------------------------
 
@@ -137,8 +138,9 @@ CREATE TABLE `creator_wallets` (
 --
 
 INSERT INTO `creator_wallets` (`id`, `user_id`, `available_balance`, `pending_balance`, `total_earned`, `total_withdrawn`, `currency`, `created_at`, `updated_at`) VALUES
-(2, 17, 1000.00, 0.00, 1000.00, 0.00, 'XAF', '2026-08-21 19:34:23', '2026-08-21 19:49:17'),
-(3, 18, 0.00, 0.00, 0.00, 0.00, 'XAF', '2026-08-21 19:47:53', '2026-08-21 19:47:53');
+(2, 17, 500.00, 0.00, 1500.00, 1000.00, 'XAF', '2026-08-21 19:34:23', '2026-08-23 16:32:03'),
+(3, 18, 0.00, 0.00, 0.00, 0.00, 'XAF', '2026-08-21 19:47:53', '2026-08-21 19:47:53'),
+(4, 20, 0.00, 0.00, 0.00, 0.00, 'XAF', '2026-08-23 16:18:14', '2026-08-23 16:18:14');
 
 -- --------------------------------------------------------
 
@@ -151,14 +153,15 @@ CREATE TABLE `followers` (
   `follower_id` int(11) NOT NULL,
   `following_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `followers`
 --
 
 INSERT INTO `followers` (`id`, `follower_id`, `following_id`, `created_at`) VALUES
-(38, 18, 17, '2026-08-21 20:48:14');
+(38, 18, 17, '2026-08-21 20:48:14'),
+(39, 20, 17, '2026-08-23 17:18:48');
 
 -- --------------------------------------------------------
 
@@ -179,7 +182,9 @@ CREATE TABLE `likes` (
 
 INSERT INTO `likes` (`id`, `user_id`, `video_id`, `created_at`) VALUES
 (65, 17, 8, '2026-08-21 20:36:28'),
-(66, 18, 8, '2026-08-21 20:48:08');
+(66, 18, 8, '2026-08-21 20:48:08'),
+(67, 20, 8, '2026-08-23 17:18:50'),
+(68, 17, 9, '2026-08-25 02:07:38');
 
 -- --------------------------------------------------------
 
@@ -203,7 +208,8 @@ CREATE TABLE `monetization` (
 
 INSERT INTO `monetization` (`id`, `user_id`, `status`, `eligible`, `eligible_at`, `activated_at`, `created_at`) VALUES
 (8, 17, 'not_eligible', 0, NULL, NULL, '2026-08-21 20:33:57'),
-(9, 18, 'not_eligible', 0, NULL, NULL, '2026-08-21 20:47:08');
+(9, 18, 'not_eligible', 0, NULL, NULL, '2026-08-21 20:47:08'),
+(10, 20, 'not_eligible', 0, NULL, NULL, '2026-08-23 16:59:09');
 
 -- --------------------------------------------------------
 
@@ -231,8 +237,9 @@ CREATE TABLE `monetization_accounts` (
 
 INSERT INTO `monetization_accounts` (`id`, `user_id`, `status`, `total_views`, `total_followers`, `eligible_at`, `activated_at`, `suspended_at`, `suspension_reason`, `created_at`, `updated_at`) VALUES
 (1, 14, 'not_eligible', 0, 0, NULL, NULL, NULL, NULL, '2026-08-21 19:07:14', '2026-08-21 19:07:14'),
-(2, 17, 'not_eligible', 2, 1, NULL, NULL, NULL, NULL, '2026-08-21 19:34:23', '2026-08-21 19:51:03'),
-(3, 18, 'not_eligible', 0, 0, NULL, NULL, NULL, NULL, '2026-08-21 19:47:53', '2026-08-21 19:47:53');
+(2, 17, 'active', 4, 2, NULL, '2026-08-23 16:31:19', NULL, NULL, '2026-08-21 19:34:23', '2026-08-25 01:08:09'),
+(3, 18, 'not_eligible', 0, 0, NULL, NULL, NULL, NULL, '2026-08-21 19:47:53', '2026-08-21 19:47:53'),
+(4, 20, 'not_eligible', 0, 0, NULL, NULL, NULL, NULL, '2026-08-23 16:18:14', '2026-08-23 16:18:14');
 
 -- --------------------------------------------------------
 
@@ -277,7 +284,10 @@ CREATE TABLE `notifications` (
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `message`, `reference_id`, `is_read`, `created_at`) VALUES
 (103, 17, 'like', '@Annick M. a aimé ta vidéo « yuzu 1734 _ The Legend of Zelda_ Tears of the Kingdom ».', 8, 0, '2026-08-21 20:48:08'),
 (104, 17, 'follow', '@Annick M. a commencé à te suivre.', 18, 0, '2026-08-21 20:48:14'),
-(105, 17, 'comment', '@Annick M. a commenté ta vidéo « yuzu 1734 _ The Legend of Zelda_ Tears of the Kingdom ».', 8, 0, '2026-08-21 20:48:43');
+(105, 17, 'comment', '@Annick M. a commenté ta vidéo « yuzu 1734 _ The Legend of Zelda_ Tears of the Kingdom ».', 8, 0, '2026-08-21 20:48:43'),
+(106, 17, 'follow', '@Paul D. a commencé à te suivre.', 20, 0, '2026-08-23 17:18:48'),
+(107, 17, 'like', '@Paul D. a aimé ta vidéo « yuzu 1734 _ The Legend of Zelda_ Tears of the Kingdom ».', 8, 0, '2026-08-23 17:18:50'),
+(108, 17, 'monetization', '🎉 Ta monétisation a été activée par l\'administrateur !', NULL, 0, '2026-08-23 17:31:19');
 
 -- --------------------------------------------------------
 
@@ -328,7 +338,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `phone`, `profile_photo`, `bio`, `date_naissance`, `is_active`, `is_admin`, `created_at`, `updated_at`) VALUES
 (12, 'admin', 'admin@gmail.com', 'scrypt:32768:8:1$AqKKeY1F8r3WrQDo$87c2ec33faf73223f289016465bdac4dd63113d129cf0d978aabade73f12899a64a8bb4b158fc83a90d3c1ad3a80383e42b769f77acc1c4a3e6ee9cdf517b1b2', NULL, NULL, NULL, NULL, 1, 1, '2026-08-19 11:39:05', '2026-08-19 11:39:05'),
 (17, 'Ravi Jr', 'ravijunior321@gmail.com', 'scrypt:32768:8:1$wI2hX5ZMTMu12d1q$64c4e9969da990221ba9fd6ee34d218a38939ad7524e7c168817ef9a5d13dfc4291170aa79b612307b406bdb01a741f5f5f4bb55ad13f2b6850628fac0895a4f', '237696670085', NULL, NULL, NULL, 1, 0, '2026-08-21 20:33:57', '2026-08-21 20:33:57'),
-(18, 'Annick M.', 'annick@gmail.com', 'scrypt:32768:8:1$Gtl0NR7F763tCo97$ff1e3a0e141c862590af434e5f34327ed56755bc12afe704a4c39ea7477f3d334123b0d6990b57f872f711c5d0f0dc4fe1cfc587e96392f62c6f704b00c7eeb9', '237699021435', NULL, NULL, NULL, 1, 0, '2026-08-21 20:47:08', '2026-08-21 20:47:08');
+(18, 'Annick M.', 'annick@gmail.com', 'scrypt:32768:8:1$Gtl0NR7F763tCo97$ff1e3a0e141c862590af434e5f34327ed56755bc12afe704a4c39ea7477f3d334123b0d6990b57f872f711c5d0f0dc4fe1cfc587e96392f62c6f704b00c7eeb9', '237699021435', NULL, NULL, NULL, 1, 0, '2026-08-21 20:47:08', '2026-08-21 20:47:08'),
+(20, 'Paul D.', 'paul@gmail.com', 'scrypt:32768:8:1$YeMo6NeshfsrWuKY$e5dde57c73ef5a6ffa2214b5c095aa03283f2d3c94e0b2b986dc10e7f27e71bf1cd79373385444aa719c52cca6819b00f711141c3bdfb1cc6a38484a57487f54', '237672345634', NULL, NULL, NULL, 1, 0, '2026-08-23 16:59:09', '2026-08-23 16:59:09');
 
 -- --------------------------------------------------------
 
@@ -356,7 +367,8 @@ CREATE TABLE `videos` (
 --
 
 INSERT INTO `videos` (`id`, `user_id`, `category_id`, `title`, `description`, `video_url`, `thumbnail_url`, `duration`, `visibility`, `status`, `created_at`, `updated_at`) VALUES
-(8, 17, NULL, 'yuzu 1734 _ The Legend of Zelda_ Tears of the Kingdom', '(64-bit) _ 1.0.0 _ NVIDIA 2026-04-26 13-26-57', '/uploads/videos/17_a38ae911637f41878f8a3c7d0a0806ff.mp4', NULL, 0, 'public', 'active', '2026-08-21 20:35:50', '2026-08-21 20:35:50');
+(8, 17, NULL, 'yuzu 1734 _ The Legend of Zelda_ Tears of the Kingdom', '(64-bit) _ 1.0.0 _ NVIDIA 2026-04-26 13-26-57', '/uploads/videos/17_a38ae911637f41878f8a3c7d0a0806ff.mp4', NULL, 0, 'public', 'active', '2026-08-21 20:35:50', '2026-08-21 20:35:50'),
+(9, 17, NULL, 'FOREVER S1 E01', 'S01 E01 VF', '/uploads/videos/17_840dcac41a8f46458283a66d5ff880b2.mp4', NULL, 0, 'public', 'active', '2026-08-25 02:07:28', '2026-08-25 02:07:28');
 
 -- --------------------------------------------------------
 
@@ -380,7 +392,9 @@ CREATE TABLE `views` (
 
 INSERT INTO `views` (`id`, `user_id`, `video_id`, `watch_duration`, `completed`, `ip_address`, `created_at`) VALUES
 (57, 17, 8, 60, 1, '127.0.0.1', '2026-08-21 20:35:50'),
-(58, 18, 8, 60, 1, '127.0.0.1', '2026-08-21 20:48:00');
+(58, 18, 8, 60, 1, '127.0.0.1', '2026-08-21 20:48:00'),
+(59, 20, 8, 60, 1, '127.0.0.1', '2026-08-23 17:18:44'),
+(60, 17, 9, 28, 0, '127.0.0.1', '2026-08-25 02:07:28');
 
 -- --------------------------------------------------------
 
@@ -407,7 +421,9 @@ CREATE TABLE `wallet_transactions` (
 
 INSERT INTO `wallet_transactions` (`id`, `user_id`, `type`, `amount`, `balance_before`, `balance_after`, `reference_type`, `reference_id`, `description`, `created_at`) VALUES
 (1, 17, 'earning', 500.00, 0.00, 500.00, 'video_view', 57, 'Revenu généré par une vue qualifiée', '2026-08-21 19:37:22'),
-(2, 17, 'earning', 500.00, 500.00, 1000.00, 'video_view', 58, 'Revenu généré par une vue qualifiée', '2026-08-21 19:49:17');
+(2, 17, 'earning', 500.00, 500.00, 1000.00, 'video_view', 58, 'Revenu généré par une vue qualifiée', '2026-08-21 19:49:17'),
+(3, 17, 'earning', 500.00, 1000.00, 1500.00, 'video_view', 59, 'Revenu généré par une vue qualifiée', '2026-08-23 16:19:47'),
+(4, 17, 'withdrawal', 1000.00, 1500.00, 500.00, 'withdrawal', 7, 'Retrait de MOMO', '2026-08-23 16:32:03');
 
 -- --------------------------------------------------------
 
@@ -429,6 +445,13 @@ CREATE TABLE `withdrawal_requests` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `processed_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `withdrawal_requests`
+--
+
+INSERT INTO `withdrawal_requests` (`id`, `user_id`, `amount`, `currency`, `operator`, `phone`, `status`, `payment_reference`, `deposit_id`, `failure_reason`, `created_at`, `processed_at`) VALUES
+(7, 17, 1000.00, 'XAF', 'MOMO', '237696670085', 'completed', 'SIMULATED-7', NULL, NULL, '2026-08-23 16:32:03', '2026-08-23 16:32:03');
 
 --
 -- Index pour les tables déchargées
@@ -589,37 +612,37 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT pour la table `creator_earnings`
 --
 ALTER TABLE `creator_earnings`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `creator_wallets`
 --
 ALTER TABLE `creator_wallets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `followers`
 --
 ALTER TABLE `followers`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT pour la table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT pour la table `monetization`
 --
 ALTER TABLE `monetization`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT pour la table `monetization_accounts`
 --
 ALTER TABLE `monetization_accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `monetization_settings`
@@ -631,7 +654,7 @@ ALTER TABLE `monetization_settings`
 -- AUTO_INCREMENT pour la table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT pour la table `shares`
@@ -643,31 +666,31 @@ ALTER TABLE `shares`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT pour la table `videos`
 --
 ALTER TABLE `videos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `views`
 --
 ALTER TABLE `views`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT pour la table `wallet_transactions`
 --
 ALTER TABLE `wallet_transactions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `withdrawal_requests`
 --
 ALTER TABLE `withdrawal_requests`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Contraintes pour les tables déchargées
