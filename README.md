@@ -46,7 +46,7 @@ et un **panel d'administration** complet pour piloter la plateforme.
   plein écran avec `scroll-snap`, autoplay/pause automatique selon
   la vidéo visible à l'écran, son coupé par défaut avec bouton
   dédié, barre de progression de lecture
-- **Publication de vidéos** avec titre, description et catégorie
+- **Publication de vidéos** avec titre, description
 - **Likes** — avec liste consultable de *qui* a aimé une vidéo, et
   animation de like au double-tap sur la vidéo (comme TikTok)
 - **Commentaires** — visibles par tous, avec pseudo et avatar de
